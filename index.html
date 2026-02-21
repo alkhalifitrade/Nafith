@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج فتح حساب - سند نافذ | الخليفي للتجارة</title>
+    
+    <!-- Google Fonts - Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Cairo', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 45px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 17px;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .form-container {
+            padding: 45px 40px;
+            background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 2px solid #e8ecef;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            color: #1a1a2e;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 22px;
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+        }
+
+        .required {
+            color: #e74c3c;
+            margin-right: 4px;
+            font-size: 16px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            direction: rtl;
+            background: #f8f9fa;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1e3c72;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(30, 60, 114, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            border-color: #e74c3c;
+            background: #fee;
+        }
+
+        input:valid:not(:placeholder-shown) {
+            border-color: #27ae60;
+            background: #f0fff4;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 12px center;
+            padding-left: 35px;
+        }
+
+        .helper-text {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 6px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .submit-section {
+            margin-top: 35px;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+        }
+
+        .btn {
+            padding: 16px 60px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 60, 114, 0.4);
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .message {
+            padding: 20px 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1e3c72;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #1e3c72;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .bismillah {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 25px;
+            padding: 18px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+            border-radius: 12px;
+            border-right: 5px solid #27ae60;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-right: 4px solid #2196f3;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: #1565c0;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* PDF Preview Styling - نمط موحد */
+        #pdfPreview {
+            display: none;
+            background: white;
+            padding: 50px 40px;
+            margin: 20px auto;
+            max-width: 210mm;
+            min-height: 297mm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            direction: rtl;
+            font-family: 'Tajawal', sans-serif;
+            line-height: 2;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #pdfPreview * {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #pdfPreview .doc-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        #pdfPreview .bismillah-doc {
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+
+        #pdfPreview .doc-date {
+            text-align: right;
+            margin-bottom: 25px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #pdfPreview .doc-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 25px 0;
+            text-decoration: underline;
+        }
+
+        #pdfPreview .doc-content {
+            text-align: right;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 2.2;
+        }
+
+        #pdfPreview .doc-content p {
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #pdfPreview .signature-section {
+            margin-top: 60px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #pdfPreview .signature-section p {
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        #pdfPreview .signature-line {
+            display: inline-block;
+            border-bottom: 2px solid #000;
+            width: 200px;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .header p {
+                font-size: 15px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 19px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 14px 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>📋 نموذج فتح حساب تجاري</h1>
+                <p>شركة علي حسين مقلم الخليفي للتجارة</p>
+                <p class="subtitle">نموذج إلكتروني متكامل مع إنشاء مستند PDF تلقائي</p>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+
+            <div class="info-box">
+                <p>📌 يرجى تعبئة جميع الحقول المطلوبة بدقة. سيتم إنشاء المستند الرسمي تلقائياً بعد الإرسال.</p>
+            </div>
+
+            <form id="accountForm">
+                <!-- معلومات التاريخ -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">📅</span>
+                        معلومات عامة
+                    </div>
+                    <div class="form-group">
+                        <label for="date">التاريخ <span class="required">*</span></label>
+                        <input type="date" id="date" name="date" required>
+                        <small class="helper-text">تاريخ تقديم طلب فتح الحساب</small>
+                    </div>
+                </div>
+
+                <!-- معلومات المؤسسة/الشركة -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">🏢</span>
+                        بيانات المؤسسة / الشركة
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="entityType">نوع الجهة <span class="required">*</span></label>
+                        <select id="entityType" name="entityType" required>
+                            <option value="">-- اختر نوع الجهة --</option>
+                            <option value="مؤسسة">مؤسسة</option>
+                            <option value="شركة">شركة</option>
+                        </select>
+                        <small class="helper-text">حدد نوع الكيان التجاري</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="entityName">اسم المؤسسة / الشركة <span class="required">*</span></label>
+                        <input type="text" id="entityName" name="entityName" required placeholder="أدخل الاسم الكامل كما هو في السجل التجاري">
+                        <small class="helper-text">الاسم الرسمي كما هو مسجل في السجل التجاري</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="crNumber">رقم السجل التجاري <span class="required">*</span></label>
+                        <input type="text" id="crNumber" name="crNumber" required placeholder="مثال: 1010123456" pattern="[0-9]{10}" maxlength="10">
+                        <small class="helper-text">10 أرقام بدون فواصل أو مسافات</small>
+                    </div>
+                </div>
+
+                <!-- معلومات العنوان -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">📍</span>
+                        عنوان المؤسسة
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">المدينة <span class="required">*</span></label>
+                            <input type="text" id="city" name="city" required placeholder="مثال: الرياض">
+                            <small class="helper-text">المدينة التي يقع بها المقر الرئيسي</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="district">الحي <span class="required">*</span></label>
+                            <input type="text" id="district" name="district" required placeholder="مثال: العليا">
+                            <small class="helper-text">اسم الحي</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="street">الشارع <span class="required">*</span></label>
+                        <input type="text" id="street" name="street" required placeholder="مثال: شارع الملك فهد">
+                        <small class="helper-text">اسم الشارع أو الطريق</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">رقم الهاتف <span class="required">*</span></label>
+                            <input type="tel" id="phone" name="phone" required placeholder="مثال: 0112345678" pattern="0[0-9]{9}" maxlength="10">
+                            <small class="helper-text">10 أرقام تبدأ بـ 01</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fax">رقم الفاكس</label>
+                            <input type="tel" id="fax" name="fax" placeholder="مثال: 0112345679" pattern="0[0-9]{9}" maxlength="10">
+                            <small class="helper-text">اختياري - 10 أرقام تبدأ بـ 01</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="example@company.com">
+                        <small class="helper-text">البريد الإلكتروني الرسمي للمؤسسة</small>
+                    </div>
+                </div>
+
+                <!-- معلومات الطلب -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">💰</span>
+                        تفاصيل الطلب الائتماني
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="creditLimit">الحد الائتماني المطلوب (ريال) <span class="required">*</span></label>
+                            <input type="number" id="creditLimit" name="creditLimit" required placeholder="مثال: 50000" min="1000" step="1000">
+                            <small class="helper-text">أدخل المبلغ بالأرقام (بالريال السعودي)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="creditLimitText">الحد الائتماني (بالكتابة)</label>
+                            <input type="text" id="creditLimitText" name="creditLimitText" readonly placeholder="يتم التحويل تلقائياً" style="background: #e9ecef;">
+                            <small class="helper-text">✨ يتم تحويل المبلغ إلى كتابة تلقائياً</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gracePeriod">مدة السماح (بالأيام) <span class="required">*</span></label>
+                        <input type="number" id="gracePeriod" name="gracePeriod" required placeholder="مثال: 30" min="1" max="180">
+                        <small class="helper-text">عدد الأيام من تاريخ إصدار الفاتورة (الحد الأقصى 180 يوم)</small>
+                    </div>
+                </div>
+
+                <!-- معلومات المالك -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">👤</span>
+                        بيانات المالك
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ownerName">اسم المالك (حسب الهوية) <span class="required">*</span></label>
+                            <input type="text" id="ownerName" name="ownerName" required placeholder="أدخل الاسم الكامل كما هو في الهوية">
+                            <small class="helper-text">الاسم كاملاً كما هو مسجل في الهوية الوطنية</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ownerId">رقم الهوية <span class="required">*</span></label>
+                            <input type="text" id="ownerId" name="ownerId" required placeholder="مثال: 1012345678" pattern="[12][0-9]{9}" maxlength="10">
+                            <small class="helper-text">10 أرقام تبدأ بـ 1 أو 2</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobile">رقم الجوال (لإرسال السند عبر نافذ) <span class="required">*</span></label>
+                        <input type="tel" id="mobile" name="mobile" required placeholder="مثال: 0501234567" pattern="05[0-9]{8}" maxlength="10">
+                        <small class="helper-text">10 أرقام تبدأ بـ 05 - سيتم إرسال السند لهذا الرقم عبر منصة نافذ</small>
+                    </div>
+                </div>
+
+                <!-- رسائل النجاح والخطأ -->
+                <div class="success-message message" id="successMessage">
+                    ✅ تم إنشاء المستند بنجاح! جاري التحميل...
+                </div>
+                <div class="error-message message" id="errorMessage">
+                    ❌ حدث خطأ أثناء إنشاء المستند. يرجى التحقق من البيانات والمحاولة مرة أخرى.
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="loading" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p class="loading-text">🔄 جاري إنشاء المستند الرسمي...</p>
+                </div>
+
+                <!-- زر الإرسال -->
+                <div class="submit-section">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        📄 إنشاء المستند وتحميله
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PDF Preview Template (Hidden) -->
+    <div id="pdfPreview">
+        <div class="doc-header">
+            <div class="bismillah-doc">بسم الله الرحمن الرحيم</div>
+        </div>
+        <div class="doc-date" id="docDate"></div>
+        <div class="doc-title">فتح حساب</div>
+        <div class="doc-content" id="docContent"></div>
+    </div>
+
+    <script>
+        // تحويل الأرقام إلى كتابة بالعربية
+        function numberToArabicWords(num) {
+            if (!num || num === 0) return 'صفر';
+            
+            const ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة'];
+            const tens = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+            const hundreds = ['', 'مائة', 'مائتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+            const teens = ['عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 
+                          'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+
+            function convertToWords(n) {
+                if (n === 0) return '';
+                if (n < 10) return ones[n];
+                if (n < 20) return teens[n - 10];
+                if (n < 100) {
+                    const ten = Math.floor(n / 10);
+                    const one = n % 10;
+                    return tens[ten] + (one ? ' و' + ones[one] : '');
+                }
+                if (n < 1000) {
+                    const hundred = Math.floor(n / 100);
+                    const rest = n % 100;
+                    return hundreds[hundred] + (rest ? ' و' + convertToWords(rest) : '');
+                }
+                if (n < 1000000) {
+                    const thousand = Math.floor(n / 1000);
+                    const rest = n % 1000;
+                    let result = '';
+                    if (thousand === 1) result = 'ألف';
+                    else if (thousand === 2) result = 'ألفان';
+                    else if (thousand >= 3 && thousand <= 10) result = ones[thousand] + ' آلاف';
+                    else result = convertToWords(thousand) + ' ألف';
+                    return result + (rest ? ' و' + convertToWords(rest) : '');
+                }
+                if (n < 1000000000) {
+                    const million = Math.floor(n / 1000000);
+                    const rest = n % 1000000;
+                    let result = '';
+                    if (million === 1) result = 'مليون';
+                    else if (million === 2) result = 'مليونان';
+                    else if (million >= 3 && million <= 10) result = ones[million] + ' ملايين';
+                    else result = convertToWords(million) + ' مليون';
+                    return result + (rest ? ' و' + convertToWords(rest) : '');
+                }
+                return num.toString();
+            }
+
+            return convertToWords(num);
+        }
+
+        // التحديث التلقائي للمبلغ بالكتابة
+        document.getElementById('creditLimit').addEventListener('input', function() {
+            const number = parseInt(this.value);
+            const textField = document.getElementById('creditLimitText');
+            
+            if (!isNaN(number) && number > 0) {
+                textField.value = numberToArabicWords(number);
+                textField.style.color = '#27ae60';
+                textField.style.fontWeight = '600';
+            } else {
+                textField.value = '';
+                textField.style.color = '';
+                textField.style.fontWeight = '';
+            }
+        });
+
+        // تحويل التاريخ للهجري
+        function convertToHijri(gregorianDate) {
+            const date = new Date(gregorianDate);
+            
+            try {
+                const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }).format(date);
+                
+                return hijriDate + 'هـ';
+            } catch (e) {
+                return toHijriApproximate(date);
+            }
+        }
+
+        function toHijriApproximate(gregorianDate) {
+            const g = new Date(gregorianDate);
+            const diff = Math.floor((g - new Date('1970-01-01')) / (1000 * 60 * 60 * 24));
+            const hDiff = Math.floor(diff * 1.03067956);
+            const hYear = 1390 + Math.floor(hDiff / 354);
+            const hMonth = Math.floor((hDiff % 354) / 29.5) + 1;
+            const hDay = Math.floor((hDiff % 354) % 29.5) + 1;
+            
+            const months = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة', 
+                          'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+            
+            return `${hDay} ${months[hMonth - 1]} ${hYear}هـ`;
+        }
+
+        // معالجة النموذج
+        document.getElementById('accountForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ جاري المعالجة...';
+
+            try {
+                const formData = {
+                    date: document.getElementById('date').value,
+                    entityType: document.getElementById('entityType').value,
+                    entityName: document.getElementById('entityName').value,
+                    crNumber: document.getElementById('crNumber').value,
+                    city: document.getElementById('city').value,
+                    district: document.getElementById('district').value,
+                    street: document.getElementById('street').value,
+                    phone: document.getElementById('phone').value,
+                    fax: document.getElementById('fax').value || 'غير متوفر',
+                    email: document.getElementById('email').value,
+                    creditLimit: document.getElementById('creditLimit').value,
+                    creditLimitText: document.getElementById('creditLimitText').value,
+                    gracePeriod: document.getElementById('gracePeriod').value,
+                    ownerName: document.getElementById('ownerName').value,
+                    ownerId: document.getElementById('ownerId').value,
+                    mobile: document.getElementById('mobile').value
+                };
+
+                const dateObj = new Date(formData.date);
+                const gregorianDate = dateObj.toLocaleDateString('ar-SA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                const hijriDate = convertToHijri(formData.date);
+
+                await generatePDF(formData, gregorianDate, hijriDate);
+
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ تم الإنشاء - إنشاء مستند جديد';
+                
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                    submitBtn.textContent = '📄 إنشاء المستند وتحميله';
+                }, 5000);
+
+            } catch (error) {
+                console.error('خطأ في إنشاء المستند:', error);
+                
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = '❌ ' + (error.message || 'حدث خطأ أثناء إنشاء المستند');
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📄 إنشاء المستند وتحميله';
+                
+                setTimeout(() => {
+                    document.getElementById('errorMessage').style.display = 'none';
+                }, 5000);
+            }
+        });
+
+        // توليد PDF
+        async function generatePDF(data, gregorianDate, hijriDate) {
+            const content = `
+                <p style="text-align: right; margin-bottom: 12px;">
+                    السادة / شركة علي حسين مقلم الخليفي للتجارة المحترمين
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 12px;">
+                    بهذا نفيدكم نحن ${data.entityType} / ${data.entityName}
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 12px;">
+                    رقم السجل التجاري: ${data.crNumber}
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 12px;">
+                    وعنوانها مدينة: ${data.city} &nbsp;&nbsp; حي: ${data.district} &nbsp;&nbsp; شارع: ${data.street}
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 12px;">
+                    تلفون: ${data.phone} &nbsp;&nbsp; فاكس: ${data.fax} &nbsp;&nbsp; ايميل: ${data.email}
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 12px; line-height: 2.2;">
+                    بأننا نرغب في شراء قطع غيار جديدة للسيارات بالآجل وبحد ائتماني بمبلغ وقدره 
+                    (${Number(data.creditLimit).toLocaleString('ar-SA')}) 
+                    ${data.creditLimitText} ريال 
+                    ومدة سماح لا تزيد عن ${data.gracePeriod} يوم من تاريخ إصدار الفاتورة 
+                    على أن نقوم بسداد المبالغ المستحقة علينا عند حلول موعدها.
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 12px;">
+                    كما نفيدكم بأن اسم المالك بالهوية ${data.ownerName} 
+                    ورقمها ${data.ownerId}
+                </p>
+                
+                <p style="text-align: right; margin-bottom: 40px;">
+                    ورقم الجوال الذي نرغب بإرسال سند لأمر له عبر نافذ هو ${data.mobile}
+                </p>
+                
+                <div class="signature-section">
+                    <p style="text-align: right; margin-bottom: 30px;">
+                        التوقيع: <span class="signature-line"></span>
+                    </p>
+                    
+                    <p style="text-align: right; margin-top: 50px;">
+                        الختم:
+                    </p>
+                </div>
+            `;
+
+            document.getElementById('docDate').innerHTML = `التاريخ: ${gregorianDate} الموافق ${hijriDate}`;
+            document.getElementById('docContent').innerHTML = content;
+
+            const preview = document.getElementById('pdfPreview');
+            preview.style.display = 'block';
+
+            const canvas = await html2canvas(preview, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false,
+                windowWidth: preview.scrollWidth,
+                windowHeight: preview.scrollHeight
+            });
+
+            preview.style.display = 'none';
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+            const fileName = `فتح_حساب_${data.entityName.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;
+            pdf.save(fileName);
+        }
+
+        // تعيين التاريخ الحالي
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+    </script>
+</body>
+</html>
