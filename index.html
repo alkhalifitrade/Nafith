@@ -421,13 +421,6 @@
             font-weight: 400;
         }
 
-        #pdfPreview .signature-line {
-            display: inline-block;
-            border-bottom: 2px solid #000;
-            width: 200px;
-            margin-right: 10px;
-        }
-
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -502,16 +495,6 @@
                         <span class="section-icon">🏢</span>
                         بيانات المؤسسة / الشركة
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="entityType">نوع الجهة <span class="required">*</span></label>
-                        <select id="entityType" name="entityType" required>
-                            <option value="">-- اختر نوع الجهة --</option>
-                            <option value="مؤسسة">مؤسسة</option>
-                            <option value="شركة">شركة</option>
-                        </select>
-                        <small class="helper-text">حدد نوع الكيان التجاري</small>
-                    </div>
 
                     <div class="form-group">
                         <label for="entityName">اسم المؤسسة / الشركة <span class="required">*</span></label>
@@ -553,18 +536,10 @@
                         <small class="helper-text">اسم الشارع أو الطريق</small>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone">رقم الهاتف <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" required placeholder="مثال: 0112345678" pattern="0[0-9]{9}" maxlength="10">
-                            <small class="helper-text">10 أرقام تبدأ بـ 01</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="fax">رقم الفاكس</label>
-                            <input type="tel" id="fax" name="fax" placeholder="مثال: 0112345679" pattern="0[0-9]{9}" maxlength="10">
-                            <small class="helper-text">اختياري - 10 أرقام تبدأ بـ 01</small>
-                        </div>
+                    <div class="form-group">
+                        <label for="phone">رقم الهاتف <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="مثال: 0112345678" pattern="0[0-9]{9}" maxlength="10">
+                        <small class="helper-text">10 أرقام تبدأ بـ 01</small>
                     </div>
 
                     <div class="form-group">
@@ -777,14 +752,12 @@
             try {
                 const formData = {
                     date: document.getElementById('date').value,
-                    entityType: document.getElementById('entityType').value,
                     entityName: document.getElementById('entityName').value,
                     crNumber: document.getElementById('crNumber').value,
                     city: document.getElementById('city').value,
                     district: document.getElementById('district').value,
                     street: document.getElementById('street').value,
                     phone: document.getElementById('phone').value,
-                    fax: document.getElementById('fax').value || 'غير متوفر',
                     email: document.getElementById('email').value,
                     creditLimit: document.getElementById('creditLimit').value,
                     creditLimitText: document.getElementById('creditLimitText').value,
@@ -800,9 +773,8 @@
                     month: 'long',
                     day: 'numeric'
                 });
-                const hijriDate = convertToHijri(formData.date);
 
-                await generatePDF(formData, gregorianDate, hijriDate);
+                await generatePDF(formData, gregorianDate);
 
                 document.getElementById('loadingSpinner').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
@@ -832,18 +804,30 @@
         });
 
         // توليد PDF
-        async function generatePDF(data, gregorianDate, hijriDate) {
+        async function generatePDF(data, gregorianDate) {
+            // تحويل الأرقام إلى صيغة إنجليزية
+            function toEnglishNumbers(str) {
+                const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+                const englishNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                
+                let result = str.toString();
+                for (let i = 0; i < 10; i++) {
+                    result = result.replace(new RegExp(arabicNums[i], 'g'), englishNums[i]);
+                }
+                return result;
+            }
+
             const content = `
                 <p style="text-align: right; margin-bottom: 12px;">
                     السادة / شركة علي حسين مقلم الخليفي للتجارة المحترمين
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 12px;">
-                    بهذا نفيدكم نحن ${data.entityType} / ${data.entityName}
+                    بهذا نفيدكم نحن ${data.entityName}
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 12px;">
-                    رقم السجل التجاري: ${data.crNumber}
+                    رقم السجل التجاري: ${toEnglishNumbers(data.crNumber)}
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 12px;">
@@ -851,29 +835,29 @@
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 12px;">
-                    تلفون: ${data.phone} &nbsp;&nbsp; فاكس: ${data.fax} &nbsp;&nbsp; ايميل: ${data.email}
+                    تلفون: ${toEnglishNumbers(data.phone)} &nbsp;&nbsp; ايميل: ${data.email}
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 12px; line-height: 2.2;">
                     بأننا نرغب في شراء قطع غيار جديدة للسيارات بالآجل وبحد ائتماني بمبلغ وقدره 
-                    (${Number(data.creditLimit).toLocaleString('ar-SA')}) 
+                    (${toEnglishNumbers(data.creditLimit)}) 
                     ${data.creditLimitText} ريال 
-                    ومدة سماح لا تزيد عن ${data.gracePeriod} يوم من تاريخ إصدار الفاتورة 
+                    ومدة سماح لا تزيد عن ${toEnglishNumbers(data.gracePeriod)} يوم من تاريخ إصدار الفاتورة 
                     على أن نقوم بسداد المبالغ المستحقة علينا عند حلول موعدها.
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 12px;">
                     كما نفيدكم بأن اسم المالك بالهوية ${data.ownerName} 
-                    ورقمها ${data.ownerId}
+                    ورقمها ${toEnglishNumbers(data.ownerId)}
                 </p>
                 
                 <p style="text-align: right; margin-bottom: 40px;">
-                    ورقم الجوال الذي نرغب بإرسال سند لأمر له عبر نافذ هو ${data.mobile}
+                    ورقم الجوال الذي نرغب بإرسال سند لأمر له عبر نافذ هو ${toEnglishNumbers(data.mobile)}
                 </p>
                 
                 <div class="signature-section">
                     <p style="text-align: right; margin-bottom: 30px;">
-                        التوقيع: <span class="signature-line"></span>
+                        التوقيع:
                     </p>
                     
                     <p style="text-align: right; margin-top: 50px;">
@@ -882,7 +866,7 @@
                 </div>
             `;
 
-            document.getElementById('docDate').innerHTML = `التاريخ: ${gregorianDate} الموافق ${hijriDate}`;
+            document.getElementById('docDate').innerHTML = `التاريخ: ${gregorianDate}`;
             document.getElementById('docContent').innerHTML = content;
 
             const preview = document.getElementById('pdfPreview');
