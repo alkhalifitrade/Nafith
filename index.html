@@ -767,23 +767,11 @@
                     mobile: document.getElementById('mobile').value
                 };
 
-                const dateObj = new Date(formData.date);
-                const gregorianDate = dateObj.toLocaleDateString('en-GB', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                }).replace(/January/g, 'يناير')
-                  .replace(/February/g, 'فبراير')
-                  .replace(/March/g, 'مارس')
-                  .replace(/April/g, 'أبريل')
-                  .replace(/May/g, 'مايو')
-                  .replace(/June/g, 'يونيو')
-                  .replace(/July/g, 'يوليو')
-                  .replace(/August/g, 'أغسطس')
-                  .replace(/September/g, 'سبتمبر')
-                  .replace(/October/g, 'أكتوبر')
-                  .replace(/November/g, 'نوفمبر')
-                  .replace(/December/g, 'ديسمبر');
+                const dateObj = new Date(formData.date + 'T00:00:00');
+                const day = String(dateObj.getDate()).padStart(2, '0');
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const year = dateObj.getFullYear();
+                const gregorianDate = `${day}/${month}/${year}`;
 
                 await generatePDF(formData, gregorianDate);
 
